@@ -1,42 +1,113 @@
 ###################
 ### Extensions ####
 ###################
-FROM ghcr.io/keitaroinc/ckan:2.9.4 as extbuild
+FROM ghcr.io/keitaroinc/ckan:2.9.4-focal as extbuild
 
 # Locations and tags, please use specific tags or revisions
 ENV HARVEST_GIT_URL=https://github.com/ckan/ckanext-harvest
-ENV HARVEST_GIT_BRANCH=v1.3.1
+ENV HARVEST_GIT_BRANCH=v1.3.3
+ENV PAGES_GIT_URL=https://github.com/ckan/ckanext-pages.git
+ENV PAGES_GIT_BRANCH=master
+ENV SHOWCASE_GIT_URL=https://github.com/ckan/ckanext-showcase.git
+ENV SHOWCASE_GIT_BRANCH=master
+ENV SPATIAL_GIT_URL=https://github.com/ckan/ckanext-spatial.git
+ENV SPATIAL_GIT_BRANCH=master
+ENV GEOVIEW_GIT_URL=https://github.com/ckan/ckanext-geoview.git
+ENV GEOVIEW_GIT_BRANCH=master
+ENV DATAJSON_GIT_URL=https://github.com/GSA/ckanext-datajson.git
+ENV DATAJSON_GIT_BRANCH=main
+ENV DCAT_GIT_URL=https://github.com/apteksdi/ckanext-dcat.git
+ENV DCAT_GIT_BRANCH=master
+ENV HIERARCHY_GIT_URL=https://github.com/ckan/ckanext-hierarchy.git
+ENV HIERARCHY_GIT_BRANCH=master
+ENV SCHEMING_GIT_URL=https://github.com/apteksdi/ckanext-scheming.git
+ENV SCHEMING_GIT_BRANCH=master
+ENV TYPEDPACKAGE_GIT_URL=https://github.com/DataShades/ckanext-create_typed_package.git
+ENV TYPEDPACKAGE_GIT_BRANCH=master
 
 # Switch to the root user
 USER root
 
+# Set the locale
+RUN apt-get update
+
 # Install necessary packages to build extensions
-# Make sure we install python 3.8, cause CKAN is not compatible with 3.9
-RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/v3.13/main \
-        python3-dev=3.8.10-r0 && \
-    apk add --no-cache \
-        gcc \
+RUN apt-get install --no-install-recommends -y \
+	gcc \
         g++ \
         libffi-dev \
-        openssl-dev \
-        rust \
-        cargo
+        openssl \
+        python3.8-dev \
+        rustc \
+        cargo \
+        libgeos-dev \
+        libc6-dev \
+        musl-dev \
+        python3-setuptools
 
 # Fetch and build the custom CKAN extensions
 RUN pip wheel --wheel-dir=/wheels git+${HARVEST_GIT_URL}@${HARVEST_GIT_BRANCH}#egg=ckanext-harvest
 RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/ckan/ckanext-harvest/${HARVEST_GIT_BRANCH}/pip-requirements.txt
 RUN curl -o /wheels/harvest.txt https://raw.githubusercontent.com/ckan/ckanext-harvest/${HARVEST_GIT_BRANCH}/pip-requirements.txt
 
+RUN pip wheel --wheel-dir=/wheels git+${PAGES_GIT_URL}@${PAGES_GIT_BRANCH}#egg=ckanext-pages
+RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/ckan/ckanext-pages/${PAGES_GIT_BRANCH}/requirements.txt
+RUN curl -o /wheels/pages.txt https://raw.githubusercontent.com/ckan/ckanext-pages/${PAGES_GIT_BRANCH}/requirements.txt
+
+RUN pip wheel --wheel-dir=/wheels git+${SHOWCASE_GIT_URL}@${SHOWCASE_GIT_BRANCH}#egg=ckanext-showcase
+RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/ckan/ckanext-showcase/${SHOWCASE_GIT_BRANCH}/requirements.txt
+RUN curl -o /wheels/showcase.txt https://raw.githubusercontent.com/ckan/ckanext-showcase/${SHOWCASE_GIT_BRANCH}/requirements.txt
+
+RUN pip wheel --wheel-dir=/wheels git+${SPATIAL_GIT_URL}@${SPATIAL_GIT_BRANCH}#egg=ckanext-spatial
+RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/ckan/ckanext-spatial/${SPATIAL_GIT_BRANCH}/requirements.txt
+RUN curl -o /wheels/spatial.txt https://raw.githubusercontent.com/ckan/ckanext-spatial/${SPATIAL_GIT_BRANCH}/requirements.txt
+
+RUN pip wheel --wheel-dir=/wheels git+${GEOVIEW_GIT_URL}@${GEOVIEW_GIT_BRANCH}#egg=ckanext-geoview
+RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/ckan/ckanext-geoview/${GEOVIEW_GIT_BRANCH}/pip-requirements.txt
+RUN curl -o /wheels/geoview.txt https://raw.githubusercontent.com/ckan/ckanext-geoview/${GEOVIEW_GIT_BRANCH}/pip-requirements.txt
+
+RUN pip wheel --wheel-dir=/wheels git+${DATAJSON_GIT_URL}@${DATAJSON_GIT_BRANCH}#egg=ckanext-datajson
+RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/GSA/ckanext-datajson/${DATAJSON_GIT_BRANCH}/requirements.txt
+RUN curl -o /wheels/datajson.txt https://raw.githubusercontent.com/GSA/ckanext-datajson/${DATAJSON_GIT_BRANCH}/requirements.txt
+
+RUN pip wheel --wheel-dir=/wheels git+${DCAT_GIT_URL}@${DCAT_GIT_BRANCH}#egg=ckanext-dcat
+RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/apteksdi/ckanext-dcat/${DCAT_GIT_BRANCH}/requirements.txt
+RUN curl -o /wheels/dcat.txt https://raw.githubusercontent.com/apteksdi/ckanext-dcat/${DCAT_GIT_BRANCH}/requirements.txt
+
+RUN pip wheel --wheel-dir=/wheels git+${HIERARCHY_GIT_URL}@${HIERARCHY_GIT_BRANCH}#egg=ckanext-hierarchy
+RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/ckan/ckanext-hierarchy/master/requirements.txt
+RUN curl -o /wheels/hierarchy.txt https://raw.githubusercontent.com/ckan/ckanext-hierarchy/master/requirements.txt
+
+RUN pip wheel --wheel-dir=/wheels git+${SCHEMING_GIT_URL}@${SCHEMING_GIT_BRANCH}#egg=ckanext-scheming
+RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/apteksdi/ckanext-scheming/master/requirements.txt
+RUN curl -o /wheels/scheming.txt https://raw.githubusercontent.com/apteksdi/ckanext-scheming/master/requirements.txt
+
+RUN pip wheel --wheel-dir=/wheels git+${TYPEDPACKAGE_GIT_URL}@${TYPEDPACKAGE_GIT_BRANCH}#egg=ckanext-create_typed_package
+RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/DataShades/ckanext-create_typed_package/master/requirements.txt
+RUN curl -o /wheels/typedpackage.txt https://raw.githubusercontent.com/DataShades/ckanext-create_typed_package/master/requirements.txt
+
 USER ckan
 
 ############
 ### MAIN ###
 ############
-FROM ghcr.io/keitaroinc/ckan:2.9.4
+FROM ghcr.io/keitaroinc/ckan:2.9.4-focal
 
 LABEL maintainer="Keitaro Inc <info@keitaro.com>"
 
-ENV CKAN__PLUGINS envvars image_view text_view recline_view datastore datapusher harvest ckan_harvester
+ENV CKAN__PLUGINS envvars stats image_view text_view recline_view resource_proxy scheming_datasets create_typed_package hierarchy_display hierarchy_form pdf_view datastore datapusher harvest ckan_harvester pages showcase spatial_metadata spatial_query csw_harvester waf_harvester doc_harvester datajson_harvest dcat_rdf_harvester dcat_json_harvester geo_view datatables_view 
+
+ENV CKANEXT__PAGES__ALLOW_HTML True
+ENV CKANEXT__PAGES__EDITOR ckeditor
+ENV CKANEXT__SHOWCASE__EDITOR ckeditor
+ENV CKAN__AUTH__CREATE_USER_VIA_API false
+ENV CKAN__AUTH__CREATE_USER_VIA_web false
+ENV CKANEXT__SPATIAL__SEARCH_BACKEND solr
+ENV CKANEXT__SPATIAL__HARVEST__CONTINUE_ON_VALIDATION_ERRORS true
+ENV CKANEXT__SPATIAL__COMMON_MAP__TYPE stamen
+ENV CKANEXT__SPATIAL__COMMON_MAP__CUSTOM__URL https://geoservices.big.go.id/rbi/rest/services/BASEMAP/Rupabumi_Indonesia/MapServer/WMTS/tile/1.0.0/BASEMAP_Rupabumi_Indonesia/default/default028mm/{z}/{y}/{x}.png
+ENV CKANEXT__SPATIAL__COMMON_MAP__ATTRIBUTION Map tiles by <a href="https://www.big.go.id">Badan Informasi Geospasial</a>.
+ENV CKANEXT__GEOVIEW__OL_VIEWER__FORMATS wms wfs geojson gml kml arcgis_rest gft
 
 # Switch to the root user
 USER root
@@ -44,10 +115,46 @@ USER root
 COPY --from=extbuild /wheels /srv/app/ext_wheels
 
 # Install and enable the custom extensions
-RUN pip install --no-index --find-links=/srv/app/ext_wheels ckanext-harvest && \
+RUN pip install auth && \
+    pip install pylons && \
+    pip install actions && \
+    pip install constants && \
+    pip install helpers && \
+    pip install ckanext-pdfview && \
+    pip install ckanext-datarequests && \
+    pip install --no-index --find-links=/srv/app/ext_wheels ckanext-harvest && \
     pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/harvest.txt && \
+    pip install --no-index --find-links=/srv/app/ext_wheels ckanext-pages && \
+    pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/pages.txt && \
+    pip install --no-index --find-links=/srv/app/ext_wheels ckanext-showcase && \
+    pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/showcase.txt && \
+    pip install --no-index --find-links=/srv/app/ext_wheels ckanext-spatial && \
+    pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/spatial.txt && \
+    pip install --no-index --find-links=/srv/app/ext_wheels ckanext-geoview && \
+    pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/geoview.txt && \
+    pip install --no-index --find-links=/srv/app/ext_wheels ckanext-datajson && \
+    pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/datajson.txt && \
+    pip install --no-index --find-links=/srv/app/ext_wheels ckanext-dcat && \
+    pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/dcat.txt && \
+    pip install --no-index --find-links=/srv/app/ext_wheels ckanext-hierarchy && \
+    pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/hierarchy.txt && \
+    pip install --no-index --find-links=/srv/app/ext_wheels ckanext-scheming && \
+    pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/scheming.txt && \
+    pip install --no-index --find-links=/srv/app/ext_wheels ckanext-create_typed_package && \
+    pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/typedpackage.txt && \
     # Configure plugins
     ckan config-tool "${APP_DIR}/production.ini" "ckan.plugins = ${CKAN__PLUGINS}" && \
+    ckan config-tool "${APP_DIR}/production.ini" "ckanext.pages.allow_html = ${CKANEXT__PAGES__ALLOW_HTML}" && \
+    ckan config-tool "${APP_DIR}/production.ini" "ckanext.pages.editor = ${CKANEXT__PAGES__EDITOR}" && \
+    ckan config-tool "${APP_DIR}/production.ini" "ckanext.showcase.editor = ${CKANEXT__SHOWCASE__EDITOR}" && \
+    ckan config-tool "${APP_DIR}/production.ini" "ckan.auth.create_user_via_api = ${CKAN__AUTH__CREATE_USER_VIA_API}" && \
+    ckan config-tool "${APP_DIR}/production.ini" "ckan.auth.create_user_via_web = ${CKAN__AUTH__CREATE_USER_VIA_WEB}" && \
+    ckan config-tool "${APP_DIR}/production.ini" "ckanext.spatial.search_backend = ${CKANEXT__SPATIAL__SEARCH_BACKEND}" && \
+    ckan config-tool "${APP_DIR}/production.ini" "ckanext.spatial.harvest.continue_on_validation_errors = ${CKANEXT__SPATIAL__HARVEST__CONTINUE_ON_VALIDATION_ERRORS}" && \
+    ckan config-tool "${APP_DIR}/production.ini" "ckanext.spatial.common_map.type = ${CKANEXT__SPATIAL__COMMON_MAP__TYPE}" && \
+    ckan config-tool "${APP_DIR}/production.ini" "ckanext.spatial.common_map.custom.url = ${CKANEXT__SPATIAL__COMMON_MAP__CUSTOM__URL}" && \
+    ckan config-tool "${APP_DIR}/production.ini" "ckanext.spatial.common_map.attribution = ${CKANEXT__SPATIAL__COMMON_MAP__ATTRIBUTION}" && \
+    ckan config-tool "${APP_DIR}/production.ini" "ckanext.geoview.ol_viewer.formats = ${CKANEXT__GEOVIEW__OL_VIEWER__FORMATS}" && \
     chown -R ckan:ckan /srv/app
 
 # Remove wheels
