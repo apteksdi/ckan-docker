@@ -10,6 +10,8 @@ ENV PAGES_GIT_URL=https://github.com/ckan/ckanext-pages.git
 ENV PAGES_GIT_BRANCH=master
 ENV SHOWCASE_GIT_URL=https://github.com/ckan/ckanext-showcase.git
 ENV SHOWCASE_GIT_BRANCH=master
+ENV OFFICEDOCS_GIT_URL=https://github.com/apteksdi/ckanext-officedocs.git
+ENV OFFICEDOCS_GIT_BRANCH=master
 ENV SPATIAL_GIT_URL=https://github.com/ckan/ckanext-spatial.git
 ENV SPATIAL_GIT_BRANCH=master
 ENV GEOVIEW_GIT_URL=https://github.com/ckan/ckanext-geoview.git
@@ -58,6 +60,10 @@ RUN pip wheel --wheel-dir=/wheels git+${SHOWCASE_GIT_URL}@${SHOWCASE_GIT_BRANCH}
 RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/ckan/ckanext-showcase/${SHOWCASE_GIT_BRANCH}/requirements.txt
 RUN curl -o /wheels/showcase.txt https://raw.githubusercontent.com/ckan/ckanext-showcase/${SHOWCASE_GIT_BRANCH}/requirements.txt
 
+RUN pip wheel --wheel-dir=/wheels git+${OFFICEDOCS_GIT_URL}@${OFFICEDOCS_GIT_BRANCH}#egg=ckanext-officedocs
+RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/apteksdi/ckanext-officedocs/${OFFICEDOCS_GIT_BRANCH}/requirements.txt
+RUN curl -o /wheels/officedocs.txt https://raw.githubusercontent.com/apteksdi/ckanext-officedocs/${OFFICEDOCS_GIT_BRANCH}/requirements.txt
+
 RUN pip wheel --wheel-dir=/wheels git+${SPATIAL_GIT_URL}@${SPATIAL_GIT_BRANCH}#egg=ckanext-spatial
 RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/ckan/ckanext-spatial/${SPATIAL_GIT_BRANCH}/requirements.txt
 RUN curl -o /wheels/spatial.txt https://raw.githubusercontent.com/ckan/ckanext-spatial/${SPATIAL_GIT_BRANCH}/requirements.txt
@@ -95,13 +101,15 @@ FROM ghcr.io/keitaroinc/ckan:2.9.4-focal
 
 LABEL maintainer="Keitaro Inc <info@keitaro.com>"
 
-ENV CKAN__PLUGINS envvars stats image_view text_view recline_view resource_proxy scheming_datasets create_typed_package hierarchy_display hierarchy_form pdf_view datastore datapusher harvest ckan_harvester pages showcase spatial_metadata spatial_query csw_harvester waf_harvester doc_harvester datajson_harvest dcat_rdf_harvester dcat_json_harvester geo_view datatables_view 
+ENV CKAN__PLUGINS envvars stats image_view text_view recline_view resource_proxy scheming_datasets create_typed_package hierarchy_display hierarchy_form pdf_view datastore datapusher harvest ckan_harvester pages showcase spatial_metadata spatial_query csw_harvester waf_harvester doc_harvester datajson_harvest dcat_rdf_harvester dcat_json_harvester geo_view officedocs_view geojson_view shp_view wmts_view datatables_view 
 
 ENV CKANEXT__PAGES__ALLOW_HTML True
 ENV CKANEXT__PAGES__EDITOR ckeditor
 ENV CKANEXT__SHOWCASE__EDITOR ckeditor
 ENV CKAN__AUTH__CREATE_USER_VIA_API false
 ENV CKAN__AUTH__CREATE_USER_VIA_web false
+ENV CKAN__AUTH__PUBLIC_USER_DETAILS false
+ENV CKAN__AUTH__PUBLIC_ACTIVITY_STREAM_DETAIL false
 ENV CKANEXT__SPATIAL__SEARCH_BACKEND solr
 ENV CKANEXT__SPATIAL__HARVEST__CONTINUE_ON_VALIDATION_ERRORS true
 ENV CKANEXT__SPATIAL__COMMON_MAP__TYPE stamen
@@ -128,6 +136,8 @@ RUN pip install auth && \
     pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/pages.txt && \
     pip install --no-index --find-links=/srv/app/ext_wheels ckanext-showcase && \
     pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/showcase.txt && \
+    pip install --no-index --find-links=/srv/app/ext_wheels ckanext-officedocs && \
+    pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/officedocs.txt && \
     pip install --no-index --find-links=/srv/app/ext_wheels ckanext-spatial && \
     pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/spatial.txt && \
     pip install --no-index --find-links=/srv/app/ext_wheels ckanext-geoview && \
@@ -149,6 +159,8 @@ RUN pip install auth && \
     ckan config-tool "${APP_DIR}/production.ini" "ckanext.showcase.editor = ${CKANEXT__SHOWCASE__EDITOR}" && \
     ckan config-tool "${APP_DIR}/production.ini" "ckan.auth.create_user_via_api = ${CKAN__AUTH__CREATE_USER_VIA_API}" && \
     ckan config-tool "${APP_DIR}/production.ini" "ckan.auth.create_user_via_web = ${CKAN__AUTH__CREATE_USER_VIA_WEB}" && \
+    ckan config-tool "${APP_DIR}/production.ini" "ckan.auth.public_user_details = ${CKAN__AUTH__PUBLIC_USER_DETAILS}" && \
+    ckan config-tool "${APP_DIR}/production.ini" "ckan.auth.public_activity_stream_detail = ${CKAN__AUTH__PUBLIC_ACTIVITY_STREAM_DETAIL}" && \
     ckan config-tool "${APP_DIR}/production.ini" "ckanext.spatial.search_backend = ${CKANEXT__SPATIAL__SEARCH_BACKEND}" && \
     ckan config-tool "${APP_DIR}/production.ini" "ckanext.spatial.harvest.continue_on_validation_errors = ${CKANEXT__SPATIAL__HARVEST__CONTINUE_ON_VALIDATION_ERRORS}" && \
     ckan config-tool "${APP_DIR}/production.ini" "ckanext.spatial.common_map.type = ${CKANEXT__SPATIAL__COMMON_MAP__TYPE}" && \
