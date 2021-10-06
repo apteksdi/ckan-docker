@@ -8,7 +8,7 @@ CKAN_SITE_URL=http://114.5.121.198:5000
 CKAN_PORT=5000
 CKAN_MAX_UPLOAD_SIZE_MB=10
 # CKAN Plugins
-CKAN__PLUGINS=envvars stats image_view text_view recline_view resource_proxy scheming_datasets create_typed_package hierarchy_display hierarchy_form pdf_view datastore datapusher harvest ckan_harvester pages showcase spatial_metadata spatial_query csw_harvester waf_harvester doc_harvester datajson_harvest dcat_rdf_harvester dcat_json_harvester geo_view officedocs_view geojson_view shp_view wmts_view datatables_view 
+CKAN__PLUGINS=envvars stats image_view text_view recline_view resource_proxy sdi scheming_datasets create_typed_package hierarchy_display hierarchy_form pdf_view datastore datapusher harvest ckan_harvester pages showcase spatial_metadata spatial_query csw_harvester waf_harvester doc_harvester datajson_harvest dcat_rdf_harvester dcat_json_harvester geo_view officedocs_view geojson_view shp_view wmts_view datatables_view 
 # CKAN requires storage path to be set in order for filestore to be enabled
 CKAN__STORAGE_PATH=/srv/app/data
 CKAN__WEBASSETS__PATH=/srv/app/data/webassets
