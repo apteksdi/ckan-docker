@@ -105,7 +105,7 @@ USER ckan
 ############
 FROM ghcr.io/keitaroinc/ckan:2.9.4-focal
 
-LABEL maintainer="Keitaro Inc <info@keitaro.com>"
+LABEL maintainer="Imam Arif Rahman <rahman.arifimam@gmail.com>"
 
 ENV CKAN__PLUGINS envvars stats image_view text_view recline_view resource_proxy sdi scheming_datasets create_typed_package hierarchy_display hierarchy_form pdf_view datastore datapusher harvest ckan_harvester pages showcase spatial_metadata spatial_query csw_harvester waf_harvester doc_harvester datajson_harvest dcat_rdf_harvester dcat_json_harvester geo_view officedocs_view geojson_view shp_view wmts_view datatables_view 
 
