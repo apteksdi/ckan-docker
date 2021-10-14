@@ -21,9 +21,9 @@ services:
     env_file:
       - ./.ckan-env
     environment:
-      - CKAN_SQLALCHEMY_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/ckan
-      - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/datastore
-      - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@db/datastore
+      - CKAN_SQLALCHEMY_URL=postgresql://ckan:${POSTGRES_PASSWORD}@10.2.131.12:5432/ckan
+      - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@10.2.131.12:5432/datastore
+      - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@10.2.131.12:5432/datastore
       - CKAN_SOLR_URL=http://solr:8983/solr/ckan
       - CKAN_REDIS_URL=redis://redis:6379/1
       - CKAN_SITE_URL=${CKAN_SITE_URL}
@@ -37,7 +37,7 @@ services:
     container_name: ckan-harvest-gather
     build:
       context: .
-    command: ckan -c /srv/app/production.ini harvester gather_consumer
+    command: ckan -c /srv/app/production.ini harvester gather-consumer
     restart: on-failure
     networks:
       - frontend
@@ -48,21 +48,21 @@ services:
     env_file:
       - ./.ckan-env
     environment:
-      - CKAN_SQLALCHEMY_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/ckan
-      - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/datastore
-      - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@db/datastore
+      - CKAN_SQLALCHEMY_URL=postgresql://ckan:${POSTGRES_PASSWORD}@10.2.131.12:5432/ckan
+      - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@10.2.131.12:5432/datastore
+      - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@10.2.131.12:5432/datastore
       - CKAN_SOLR_URL=http://solr:8983/solr/ckan
       - CKAN_REDIS_URL=redis://redis:6379/1
       - CKAN_SITE_URL=${CKAN_SITE_URL}
       - CKAN_MAX_UPLOAD_SIZE_MB=${CKAN_MAX_UPLOAD_SIZE_MB}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
-
+      
   ckan-harvest-fetch:
     container_name: ckan-harvest-fetch
     build:
       context: .
-    command: ckan -c /srv/app/production.ini harvester fetch_consumer
+    command: ckan -c /srv/app/production.ini harvester fetch-consumer
     restart: on-failure
     networks:
       - frontend
@@ -73,9 +73,9 @@ services:
     env_file:
       - ./.ckan-env
     environment:
-      - CKAN_SQLALCHEMY_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/ckan
-      - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/datastore
-      - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@db/datastore
+      - CKAN_SQLALCHEMY_URL=postgresql://ckan:${POSTGRES_PASSWORD}@10.2.131.12:5432/ckan
+      - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@10.2.131.12:5432/datastore
+      - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@10.2.131.12:5432/datastore
       - CKAN_SOLR_URL=http://solr:8983/solr/ckan
       - CKAN_REDIS_URL=redis://redis:6379/1
       - CKAN_SITE_URL=${CKAN_SITE_URL}
@@ -97,16 +97,16 @@ services:
     env_file:
       - ./.ckan-env
     environment:
-      - CKAN_SQLALCHEMY_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/ckan
-      - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/datastore
-      - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@db/datastore
+      - CKAN_SQLALCHEMY_URL=postgresql://ckan:${POSTGRES_PASSWORD}@10.2.131.12:5432/ckan
+      - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@10.2.131.12:5432/datastore
+      - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@10.2.131.12:5432/datastore
       - CKAN_SOLR_URL=http://solr:8983/solr/ckan
       - CKAN_REDIS_URL=redis://redis:6379/1
       - CKAN_SITE_URL=${CKAN_SITE_URL}
       - CKAN_MAX_UPLOAD_SIZE_MB=${CKAN_MAX_UPLOAD_SIZE_MB}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
-
+      
   ckan-harvest-cleanlog:
     container_name: ckan-harvest-cleanlog
     build:
@@ -121,9 +121,9 @@ services:
     env_file:
       - ./.ckan-env
     environment:
-      - CKAN_SQLALCHEMY_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/ckan
-      - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/datastore
-      - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@db/datastore
+      - CKAN_SQLALCHEMY_URL=postgresql://ckan:${POSTGRES_PASSWORD}@10.2.131.12:5432/ckan
+      - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@10.2.131.12:5432/datastore
+      - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@10.2.131.12:5432/datastore
       - CKAN_SOLR_URL=http://solr:8983/solr/ckan
       - CKAN_REDIS_URL=redis://redis:6379/1
       - CKAN_SITE_URL=${CKAN_SITE_URL}
@@ -133,7 +133,7 @@ services:
 
   datapusher:
     container_name: datapusher
-    image: ghcr.io/keitaroinc/datapusher:${DATAPUSHER_VERSION}
+    image: ghcr.io/apteksdi/datapusher:0.0.17
     networks:
       - frontend
       - backend
@@ -147,11 +147,11 @@ services:
       - DATAPUSHER_SSL_VERIFY=${DATAPUSHER_SSL_VERIFY}
       - DATAPUSHER_REWRITE_RESOURCES=${DATAPUSHER_REWRITE_RESOURCES}
       - DATAPUSHER_REWRITE_URL=${DATAPUSHER_REWRITE_URL}
-
+      
   db:
     container_name: db
     build:
-      context: ../../compose
+      context: compose
       dockerfile: postgresql/Dockerfile
       args:
         - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
@@ -161,7 +161,6 @@ services:
     environment:
       - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - PGDATA=/var/lib/postgresql/data/db
     volumes:
       - pg_data:/var/lib/postgresql/data
     healthcheck:
@@ -170,12 +169,14 @@ services:
   solr:
     container_name: solr
     build:
-      context: ../../compose
+      context: compose
       dockerfile: solr/Dockerfile
       args:
-        - CKAN_VERSION=${CKAN_VERSION}
+        - CKAN_VERSION=2.9.4
     networks:
       - backend
+    ports:
+      - "8983:8983"
     volumes:
       - solr_data:/opt/solr/server/solr/ckan/data
 
