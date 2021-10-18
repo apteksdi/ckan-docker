@@ -172,7 +172,7 @@ services:
       context: compose
       dockerfile: solr/Dockerfile
       args:
-        - CKAN_VERSION=2.9.4
+        - CKAN_VERSION=${CKAN_VERSION}
     networks:
       - backend
     ports:
