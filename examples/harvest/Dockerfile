@@ -28,6 +28,8 @@ ENV TYPEDPACKAGE_GIT_URL=https://github.com/apteksdi/ckanext-create_typed_packag
 ENV TYPEDPACKAGE_GIT_BRANCH=master
 ENV SDI_GIT_URL=https://github.com/apteksdi/ckanext-sdi.git
 ENV SDI_GIT_BRANCH=master
+ENV RESOURCEDICTIONARY_GIT_URL=https://github.com/keitaroinc/ckanext-resourcedictionary.git
+ENV RESOURCEDICTIONARY_GIT_BRANCH=main
 
 # Switch to the root user
 USER root
@@ -98,6 +100,11 @@ RUN pip wheel --wheel-dir=/wheels git+${SDI_GIT_URL}@${SDI_GIT_BRANCH}#egg=ckane
 RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/apteksdi/ckanext-sdi/master/requirements.txt
 RUN curl -o /wheels/sdi.txt https://raw.githubusercontent.com/apteksdi/ckanext-sdi/master/requirements.txt
 
+RUN pip wheel --wheel-dir=/wheels git+${RESOURCEDICTIONARY_GIT_URL}@${RESOURCEDICTIONARY_GIT_BRANCH}#egg=ckanext-resourcedictionary
+RUN pip wheel --wheel-dir=/wheels -r https://raw.githubusercontent.com/keitaroinc/ckanext-resourcedictionary/main/requirements.txt
+RUN curl -o /wheels/resourcedictionary.txt https://raw.githubusercontent.com/keitaroinc/ckanext-resourcedictionary/main/requirements.txt
+
+
 USER ckan
 
 ############
@@ -108,7 +115,7 @@ FROM ghcr.io/keitaroinc/ckan:2.9.4-focal
 LABEL maintainer="Keitaro Inc <info@keitaro.com>"
 
 ENV CKAN_ROOT_PATH /data/{{LANG}}/
-ENV CKAN__PLUGINS envvars stats image_view text_view recline_view resource_proxy sdi scheming_datasets create_typed_package hierarchy_display hierarchy_form pdf_view datastore datapusher harvest ckan_harvester pages showcase spatial_metadata spatial_query csw_harvester waf_harvester doc_harvester datajson_harvest dcat_rdf_harvester dcat_json_harvester geo_view officedocs_view geojson_view shp_view wmts_view datatables_view
+ENV CKAN__PLUGINS envvars stats image_view text_view recline_view resource_proxy sdi scheming_datasets create_typed_package hierarchy_display hierarchy_form pdf_view resourcedictionary datastore datapusher harvest ckan_harvester pages showcase spatial_metadata spatial_query csw_harvester waf_harvester doc_harvester datajson_harvest dcat_rdf_harvester dcat_json_harvester geo_view officedocs_view geojson_view shp_view wmts_view datatables_view
 ENV CKANEXT__PAGES__ALLOW_HTML True
 ENV CKANEXT__PAGES__EDITOR ckeditor
 ENV CKANEXT__SHOWCASE__EDITOR ckeditor
@@ -160,6 +167,8 @@ RUN pip install auth && \
     pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/typedpackage.txt && \
     pip install --no-index --find-links=/srv/app/ext_wheels ckanext-sdi && \
     pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/sdi.txt && \
+    pip install --no-index --find-links=/srv/app/ext_wheels ckanext-resourcedictionary && \
+    pip install --no-index --find-links=/srv/app/ext_wheels -r /srv/app/ext_wheels/resourcedictionary.txt && \
     # Configure plugins
     ckan config-tool "${APP_DIR}/production.ini" "ckan.root_path = ${CKAN_ROOT_PATH}" && \
     ckan config-tool "${APP_DIR}/production.ini" "ckan.plugins = ${CKAN__PLUGINS}" && \
