@@ -133,7 +133,7 @@ services:
 
   datapusher:
     container_name: datapusher
-    image: ghcr.io/keitaroinc/datapusher:${DATAPUSHER_VERSION}
+    image: ghcr.io/apteksdi/datapusher:0.0.17
     networks:
       - frontend
       - backend
