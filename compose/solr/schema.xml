@@ -105,6 +105,8 @@ schema. In this case the version should be set to the next CKAN version number.
     <field name="miny" type="float" indexed="true" stored="true" />
     <field name="prioritas_tahun" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="kategori_spbe" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="department_type" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="publisher_type" type="string" indexed="true" stored="true" multiValued="true"/>
  
     <field name="index_id" type="string" indexed="true" stored="true" required="true" />
     <field name="id" type="string" indexed="true" stored="true" required="true" />
